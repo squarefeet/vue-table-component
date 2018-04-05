@@ -5,16 +5,19 @@ function setDocumentInnerHtml({ sortBy, sortOrder }) {
     document.body.innerHTML = `
         <div id="app">
             <table-component
-                :data="[{ firstName: 'John', lastName: 'Lennon', songs: 72 },
-                        { firstName: 'Paul', lastName: 'McCartney', songs: 70 },
-                        { firstName: 'George', lastName: 'Harrison', songs: 22 },
-                        { firstName: 'Ringo', lastName: 'Starr', songs: 2 }]"
+                :data="[
+                    { firstName: 'John', lastName: 'Lennon', birthday: '04/10/1940', songs: 72 },
+                    { firstName: 'Paul', lastName: 'McCartney', birthday: '18/06/1942', songs: 70 },
+                    { firstName: 'George', lastName: 'Harrison', birthday: '25/02/1943', songs: 22 },
+                    { firstName: 'Ringo', lastName: 'Starr', birthday: '07/07/1940', songs: 2 }
+                ]"
                 sort-by="${sortBy}"
                 sort-order="${sortOrder}"
             >
                 <table-column show="firstName" label="First name"></table-column>
                 <table-column show="lastName" label="Last name"></table-column>
                 <table-column show="songs" label="Songs" :sortable="false"></table-column>
+                <table-column show="birthday" label="Birthday" data-type="date:DD/MM/YYYY"></table-column>
             </table-component>
         </div>
     `;
@@ -103,5 +106,16 @@ describe('Sorting', () => {
         await simulant.fire(lastNameColumnHeader, 'click');
 
         expect(table.sort.fieldName).toBe('lastName');
+    });
+
+    it('can sort the data by date', async () => {
+        setDocumentInnerHtml({ sortBy: 'birthday', sortOrder: 'asc' });
+
+        const table = await createVm();
+
+        expect(table.displayedRows[0].data.firstName).toBe('Ringo');
+        expect(table.displayedRows[1].data.firstName).toBe('John');
+        expect(table.displayedRows[2].data.firstName).toBe('Paul');
+        expect(table.displayedRows[3].data.firstName).toBe('George');
     });
 });
