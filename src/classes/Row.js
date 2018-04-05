@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { parse, format } from 'date-fns';
 import { get } from '../helpers';
 
 export default class Row {
@@ -39,9 +39,9 @@ export default class Row {
         }
 
         if (dataType.startsWith('date')) {
-            const format  = dataType.replace('date:', '');
+            const dateFormat = dataType.replace('date:', '');
 
-            return moment(value, format).format('YYYYMMDDHHmmss');
+            return format(parse(value, dateFormat, new Date()), 'YYYYMMDDHHmmss');
         }
 
         if (dataType === 'numeric') {
